@@ -1,6 +1,13 @@
 #include "foundation.h"
 #include <stdio.h>
 
+typedef struct   s_global {
+    char    *meta;
+    char    *prima;
+    char    *sucessions;
+    char    *notation;
+}                t_global;
+
 int     calc_weight(char *num) {
     int base;
     int i;
@@ -81,9 +88,6 @@ char    *f_strdup(char *s){
     return (dup);
 }
 
-//write a memdel function
-
-
 char    *generation(char *prima, int sucessions, char *notation) {
     int     i;
     char    *tmp;
@@ -99,21 +103,40 @@ char    *generation(char *prima, int sucessions, char *notation) {
     return(meta);
 }
 
-int     main (int argc, char **argv) {
-    char    *meta;
-    char    *prima;
-    char    *sucessions;
-    char    *notation;
+t_global        *display_menu(t_global *data) {
+    f_putstr("Please select and option for displaying the delusion of the prima representation");
+    f_putendl("1. determinate sucessions");
+    f_putendl("2. hallucinatory sucessions");
+    return (data);
+}
 
+struct s_global *init(struct s_global *global, char *prima, char *sucessions, char *notation) {
+    global = f_memalloc(sizeof(struct s_global));
+    global->prima = prima;
+    global->sucessions = sucessions;
+    global->notation = notation;
+    global->meta = generation(
+        global->prima, 
+        parse_num(global->sucessions), 
+        global->notation
+    );
+    return (global);
+}
+
+/*
+** For now, we will use arrays ot represent pluralitiess,,,,,,,,,,,,,,,dd
+*/
+
+int          main (int argc, char **argv) {
+    t_global    *global;
+    
     if (argc < 2){
         return 0;
     }
+    global = NULL;
+    global = init(global, argv[2], argv[1], argv[3]);
+    display_menu(global);
     
-    prima = argv[2];
-    sucessions = argv[1];
-    notation = argv[3];
-
-    meta = generation(prima, parse_num(sucessions), notation);
-    f_putendl(meta);
+    f_putendl(global->meta);
     return (0);
 }
