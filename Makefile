@@ -6,6 +6,7 @@ SRCS := $(wildcard ./src/*.c)
 OBJS := $(patsubst %.c, %.o, $(SRCS))
 CFLAGS = -Wall -Werror -Wextra -I$(LIBD)
 LDFLAGS = -L$(LIBD) -lfoundation
+DEBUG_FLAGS = -g -v
 
 all: $(LIBF) $(NAME)
 
@@ -16,7 +17,10 @@ $(NAME): $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) -o $(NAME)
 
 $(OBJS): %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG_FLAGS) -c $< -o $@
+
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: clean $(NAME)
 
 clean:
 	rm -f $(OBJS)
