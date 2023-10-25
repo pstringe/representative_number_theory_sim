@@ -14,6 +14,14 @@ typedef struct   s_global {
 }                t_global;
 
 /*
+** RTN: 
+*/
+
+typedef struct  s_hallucination {
+
+}               t_hallucination;
+
+/*
 ** Expressable abstraction of  of information, pointed to by
 ** *representation.
 */
@@ -32,7 +40,7 @@ typedef struct  s_abstraction {
 typedef struct  s_proposition {
     char                    *val;
     struct s_abstraction    *plurality;
-}               t_abstraction;
+}               t_proposition;
 
 /*
 **  Process related meta-representations
@@ -40,24 +48,129 @@ typedef struct  s_proposition {
 
 typedef struct  s_sucession {
     struct s_process        *process;
-    struct s_observattion   *s_observation;
-}               t_sucession;
-
-typedef struct  s_process {
-    int                     *v_space;
-    struct s_proposition    **r_space;
-    struct s_space          **posibility_space;
-    struct s_abstraction    **observations;                                                                                         
+    struct s_abstraction    *observation;
+    struct s_abstraction    *evaluation;
 }               t_sucession;
 
 /*
-** After dfining process data structure.
+** Process 
+*/
+
+typedef struct  s_process {
+    struct s_abstraction    *v_space;
+    struct s_proposition    **r_space;
+    struct s_space          **posibility_space;
+    struct t_sucession      **sucessions; 
+    size_t                  no_of_processes;                                                                                     
+}               t_process;
+
+/*
+** simple determinate selector assume binary state-space single proposition
+** assume (f f) != f
+** over-operate t_sucession, pass in proccess struct to gain access to p R and V space
+** TODO: modify struct s_abstraction, to include uttility functions for CRUD
+*/
+
+char *simple_determinate_selector(t_sucession **process, idx) {
+    t_sucession *sucession;
+    sucession = process.successions[idx];
+    char *value;
+    
+    value = (char*)f_memalloc(sizeof(char) * 1 + 1);
+    value[1] = '\0';
+    value[0] = (((sucession->observation == 0) ? 1 : 0) - '0');
+    sucession->evaluation->symbol=value;
+    sucession->evaluation->representation=value;
+
+    return (value);  
+}
+
+/*
+** allocate and evaluate, observe a sucession
+*/
+
+t_sucession **new_succession(t_sucession **process, int i, (*t_process)(selector), void *last_evaluation) {
+    process->sucessions[i] = (*t_sucession)f_memalloc(sizeof(t_sucession));
+    process->sucessions[i]->observation = last_evaluation;
+    process->sucessions[i]->evaluation = selector(process, )
+    return (proccess->sucessions[i]);
+}
+
+/*
+** proc calc functions
+** TODO : Check spellling of process
+*/
+
+t_sucession **new_proccess(int no_sucessions, void *init, (*t_process, int)(selector)) {
+    t_process   *process;
+    t_sucession **succesions;
+    void        *last_obs;
+    int         i;
+    
+    process = (*t_process)f_memalloc(sizeof(process) * no_sucessions);
+    process->v_space = [0 , 1];
+    process->r_space = ["q"];
+    process->posibility_space = [
+        ["0", "1"];
+    ]; //review static declarations in C
+    /*generate_possibility_space(process);*/
+
+    succesions = process->sucessions;
+    last_obs = init;
+    i = 0;
+    while (i < no_sucessions){
+        succesions[i] = new_succession(process, i, selector(process, i), last_obs);
+        last_obs = succesions[i]->evaluation;
+        i++;
+    }
+    return (process);
+}
+
+/*
+** display succession
+**    1. index
+**    2. last evaluation
+**    3. observation
+**    4. evaluation
+**
+*/
+
+void    display_succession(t_sucession sucession, void* last_evaluation, size_t idx) {
+    f_putnbr(idx);
+    f_putchar(' ');
+    f_putstr((char*)last_evaluation);
+    f_putchar(' ');
+    f_putstr((char*)sucession.observation);
+    f_putchar(' ');
+    f_putstr((char*)sucession.evaluation);
+    f_putstr('\n');
+}
+
+/*
+** display sucessions of a process
+*/
+
+void    display_process(t_process *process){
+    int     i;
+    void    *last;
+    
+    i = 0;
+    while (i < process->no_of_processes) {
+        last = (i == 0 ? init : process->sucessions[i - 1].evaluation);
+        display_sucession(process->sucessions[i], last, i);
+        i++;
+    }    
+}
+
+/*----*/
+/*
+** After dining process data structure.
 *** code a routine of prioritiaztion by dividing the day into 4 qudrants.
 *** Develop meta-logic
 *** Develop spatial representation positional calc
 */
 
-int     (char *num) {
+int calc_most_significant_weight(char *num) {
     int base;
     int i;
 
@@ -72,13 +185,14 @@ int     (char *num) {
 /*
 ** This function reads a string and returns an integer
 */
+
 int     parse_num(char *num) {
     int     n;
     int     i;
     int     base;
     int     digit;
 
-    base = calc_weight(num);
+    base = calc_most_significant_weight(num);
     i = 0;
     n = 0;
     while (base && *(num + i)) {
@@ -116,26 +230,31 @@ char    *succeed(char *src, char *notation) {
 }
 
 /*
-**   
+**  
+**
 */
 
-char     **new_row(propositions, n, m) {
-    int     m;
+char     **new_row(char **propositions, int n, int m) {
     int     i;
     int     j;
+    int     k;
+    int     len;
     char    **arr;
 
-    arr = (char**)f_memalloc([]);
+    len = f_array_len(propositions);
+    arr = (char**)f_memalloc(sizeof(char*) * n);
+    i = 0;
     while (i < n) {
-        arr[i] = (char*)f_memalloc(sizeof((char *)));
+        arr[i] = (char*)f_memalloc(sizeof(char) * m);
+        j = 0;
         while (j < m) {
-            //gen val given prop in rtn
-            succeed("q", 1, "infix");
-            //gen val given prop in rtn
-            succeed("r", 1, "infix");
+            k = 0;
+            while(k < len) {
+                succeed(propositions[k], "infix");
+            }
         }
     }
-    return (arr)
+    return (arr);
 }
 
 /*
@@ -148,6 +267,7 @@ char     **new_row(propositions, n, m) {
 **   . 
 **   .
 ** The length of each row will always by the number of propositions
+*/
 
 /*
 ** Given a representaiton in RTN a, hallucinates a meta-representation
@@ -202,52 +322,51 @@ char     **new_row(propositions, n, m) {
     2. Given the space of propositions,
         Select each
         Call f(V R,)
-
 */
 
-char    **generate_possibility_space(char **value_space, char **propositions) {  //[p [m p]] [p r]
+int     raise(int base, int power){
+    if (power == 0){
+        return 1;
+    }
+    return (raise(base, power) * raise(base, power - 1));
+}
+
+char    **generate_possibility_space(t_process *process) {  //[p [m p]] [p r]
     int     n;
     int     m;
     int     r;
     int     i;
     int     j;
+
+    int     p_space_len;
+    char    *cur_prop_idx;
+    char    *cur_prop:
+    char    *cur_val;
     char    **possibility_space;
+    int     CONST_CHAR_OFFSET;
 
     n = f_array_len(value_space);
     m = f_array_len(propositions);
-    possibility_space = [];
 
+    mat_len = (sizeof(char*) * raise(n, m));
+    possibility_space = f_memalloc(sizeof(char*) * raise(n, m));
+    
     if (n < 2) {
         return NULL;
     }
-
-    i = 1;
-    r = 2;
-
-    while (i++ < m) {
-        r *= 2;
-    }
-
-    possibility_space = f_memalloc((char**)(r + 1));
-    possibility_space[r] = NULL;
     
-    /*
-    [
-        ['p', 'p'],
-        ['p', '(m p)'],
-        ['(m p)', 'p'],
-        ['(m p), (m p)]
-    ]ss
-    */
-
     i = 0;
-    j = 0;
-
-    while (i < r) {
-        possibility_space[i] = new_row(m);
-        while (j < i){
-                    
-            j++;
+    while (i < p_space_len) {
+        possibility_space[i] = f_memalloc((char*) * m);
+        v_idx = 0;
+        p_idx = 0;
+        j = 0;
+        while (j < n) {
+            v_idx = (v_idx < n : v_idx++ : 0);
+            p_idx = (p_idx < m ? p_idx : 0);
+            cur_val = ((char*)(value_space[v_idx] + CONST_CHAR_OFFSET));
+            cur_prop = (propositions[p_idx]);
+            possibility_space[i][j] = generation(propositions[cur_prop], value_space[cur_val], "prefix");
         }
         i++;
     }
@@ -256,99 +375,89 @@ char    **generate_possibility_space(char **value_space, char **propositions) { 
 }
 
 /*
-** Doubting everything you code when you are a hallucination
-** Evidence isn't what it seems. 
-*/
-
-typedef struct  s_hallucination {
-
-}               t_hallucination;
-
-/*
     Given a representation as a p-space, hallucinate the meta-representation
     TESTS:
-        GIVEN:
-        (
-            (:= 
-                V # value space
-                (
-                    p 
-                    (m p)
-                )
+    GIVEN:
+    (
+        (:= 
+            V # value space
+            (
+                p 
+                (m p)
             )
-            (:=
-                R # propostions space
-                (
-                    p
-                    q
-                )
+        )
+        (:=
+            R # propostions space
+            (
+                p
+                q
             )
-            (:= S
-                (p-space
-                    V
-                    R
-                ) # => (
-                    (p , p),
-                    (p, (m p)),
-                    ((m p), p),
-                    ((m p), (m p)),
-                )
+        )
+        (:= S
+            (p-space
+                V
+                R
+            ) # => (
+                (p , p),
+                (p, (m p)),
+                ((m p), p),
+                ((m p), (m p)),
             )
-        TEST 0:
-            (hallucinate (q r)) = (m (q r)) = 
-            (::= 
-                ((m q) (m r)) (
+        )
+    TEST 0:
+        (hallucinate (q r)) = (m (q r)) = 
+        (::= 
+            ((m q) (m r)) (
+            (p p)
+            (p (m p))
+            ((m p) p)
+            ((m p) (m p))
+        )
+
+    TEST 1:
+        (hallucinate (
                 (p p)
                 (p (m p))
                 ((m p) p)
                 ((m p) (m p))
             )
-
-        TEST 1:
-            (hallucinate (
-                    (p p)
-                    (p (m p))
-                    ((m p) p)
-                    ((m p) (m p))
-                )
-            ) = (m (
-                    (p p)
-                    (p (m p))
-                    ((m p) p)
-                    ((m p) (m p))
-                )
-            ) = ( 
-                (m (p p))
-                (m (p (m p)))
-                (m ((m p) p))
-                (m ((m p) (m p)))
-            ) = (
-                (
-                    (p (m p))
-                    ((m p) p)
-                    ((m p) (m p))
-                )
-                (
-                    (p p)
-                    ((m p) p)
-                    ((m p) (m p)) 
-                )
-                (
-                    (p p)
-                    (p (m p))
-                    ((m p) (m p))
-                )
-                (
-                    (p p)
-                    (p (m p))
-                    ((m p ) p)
-                )
+        ) = (m (
+                (p p)
+                (p (m p))
+                ((m p) p)
+                ((m p) (m p))
+            )
+        ) = ( 
+            (m (p p))
+            (m (p (m p)))
+            (m ((m p) p))
+            (m ((m p) (m p)))
+        ) = (
+            (
+                (p (m p))
+                ((m p) p)
+                ((m p) (m p))
+            )
+            (
+                (p p)
+                ((m p) p)
+                ((m p) (m p)) 
+            )
+            (
+                (p p)
+                (p (m p))
+                ((m p) (m p))
+            )
+            (
+                (p p)
+                (p (m p))
+                ((m p ) p)
             )
         )
+    )
 */ 
 
 char    *hallucinate(*representation) {
-    
     
 }
 
@@ -367,6 +476,10 @@ char    *f_strdup(char *s) {
     return (dup);
 }
 
+/*
+** 
+*/
+
 char    *generation(char *prima, int sucessions, char *notation) {
     int     i;
     char    *tmp;
@@ -382,6 +495,10 @@ char    *generation(char *prima, int sucessions, char *notation) {
     return(meta);
 }
 
+/*
+** display menu
+*/
+
 t_global        *display_menu(t_global *data) {
     char    *input;
     int     fd;
@@ -392,14 +509,14 @@ t_global        *display_menu(t_global *data) {
     f_putendl("Please select and option for displaying the delusion of the prima representation: ");
     f_putendl("1. determinate sucessions ");
     f_putendl("2. hallucinatory sucessions ");
-    
+
     f_gnl(1, &input);
     data.option = (int)(input[0] - 60);
     return (data);
 }
 
 /*
-**  
+** instanciate global data-structure
 */
 
 struct s_global *init(struct s_global *global, char *prima, char *sucessions, char *notation) {
@@ -416,17 +533,8 @@ struct s_global *init(struct s_global *global, char *prima, char *sucessions, ch
 }
 
 /*
-** For now, we will use arrays to represent pluralitiess
-** tests
-** PARAMS : no_of_successions, prima_representation, notation [prefix/infix]
-**  ./main 10 p prefix
-**  ./main 10 p infix
+** Proc calc functions
 */
-
-int          row(int len, no_of_processes ){
-
-}
-
 
 int          simple_reductive_proc_sys (size_t sucessions, int *v_space, size_t v_len, size_t no_of_procs) {
 
@@ -442,15 +550,12 @@ int          simple_reductive_proc_sys (size_t sucessions, int *v_space, size_t 
     }
 
     //allocate space for process rep
-    
-
     //observe base rep
     init = v_space[0]
     for (int i; i < sucessions; i++) {
         int sucession = new_sucession();
         select (base_rep[i])
     }
-    
 }
 
 int          main (int argc, char **argv) {
@@ -466,10 +571,14 @@ int          main (int argc, char **argv) {
     if (argc < 2){
         return 0;
     }
+
+    new_proccess(8, "0", simple_determinate_selector)
+    /*
     global = NULL;
     display_menu(global);
     global = init(global, prima_representation, successions, notation);
-    
     f_putendl(global->meta);
+    new_proccess
     return (0);
+    */
 }
