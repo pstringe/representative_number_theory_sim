@@ -9,8 +9,8 @@ char    f_array_cmp(char **a1, char **a2, int (*cmp) (char*, char*)) {
     int n;
     int m; 
 
-    n = f_array_len(a1);
-    m = f_array_len(a2);
+    n = f_array_len((void**)a1);
+    m = f_array_len((void**)a2);
 
     if (n != m) return 0;
 

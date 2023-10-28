@@ -6,7 +6,7 @@ char    **f_array_resize(char ***array, size_t incr) {
     int     i;
     char    **new;
 
-    n = f_array_len(*array);
+    n = f_array_len((void**)*array);
     new = (char**)f_memalloc((n + incr) * sizeof(char *));
     i = 0;
     while (i < n) {

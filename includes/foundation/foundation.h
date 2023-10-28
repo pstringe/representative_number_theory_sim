@@ -8,7 +8,7 @@
 int         f_absval(int n);
 char        **f_array_append(char **array, char *item);
 char        f_array_cmp(char **a1, char **a2, int (*cmp) (char*, char*));
-size_t      f_array_len(char **arr);
+size_t      f_array_len(void **arr);
 char        **f_array_resize(char ***array, size_t incr);
 char        *f_bzero(void *s, size_t n);
 char        f_dtoc(int n);
