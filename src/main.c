@@ -40,7 +40,7 @@ typedef struct s_dimension {
 typedef struct s_space {
     struct s_abstraction   **dimensions; 
 }              t_space;
-
+                                                              
 /*
 ** Expressable abstraction of  of information, pointed to by
 ** *representation.
@@ -48,7 +48,7 @@ typedef struct s_space {
 
 typedef struct  s_abstraction {
     char                    *symbol;
-    void                    *representation;
+    void                    *data;
     struct s_abstraction    *expression;
 }               t_abstraction;
 
@@ -79,7 +79,7 @@ typedef struct  s_succession {
 typedef struct  s_proccess {
     struct s_abstraction    **v_space;
     struct s_proposition    **r_space;
-    struct s_space          *posibility_space;
+    struct s_space          *possibility_space;
     struct s_succession     **successions; 
     size_t                  no_of_proccesses;                                                                                     
 }               t_proccess;
@@ -88,11 +88,11 @@ typedef struct  s_proccess {
 ** New abstraction
 */
 
-t_abstraction *new_abstraction(void *symbol, void *information) {
+t_abstraction *new_abstraction(void *symbol, void *data) {
     t_abstraction *new;
 
     new = (t_abstraction*)f_memalloc(sizeof(t_abstraction));
-    new->information = information;
+    new->data = data;
     new->symbol = symbol;
     new->expression = NULL;
     return (new);
@@ -119,11 +119,28 @@ t_dimension *new_dimension(t_abstraction **positions) {
     t_dimension *new;
     size_t len;
 
-    len = f_array_len(positions);
-    new = (t_dimension*)f_memalloc(sizeof(t_dimension*) * len);
+    len = f_array_len((void**)positions);
+    new = (t_dimension*)f_memalloc(sizeof(t_dimension));
     new->positions = positions;
 
     return (new);
+}
+
+/*
+** generate an array of positions
+*/
+
+t_abstraction **gen_positions(size_t no_of_pos) {
+    size_t          i;
+    t_abstraction   **positions;
+
+    i = 0; 
+    positions = (t_abstraction**)f_memalloc(sizeof(t_abstraction*) * no_of_pos);
+
+    while (i < no_of_pos) {
+        positions[i] = (t_abstraction*)f_memalloc(sizeof(t_abstraction));
+    }
+    return (positions);
 }
 
 /*
@@ -142,30 +159,19 @@ t_abstraction *simple_determinate_selector(t_proccess *proccess, int idx) {
     value[1] = '\0';
     value[0] = (((succession->observation == 0) ? 1 : 0) - '0');
     succession->evaluation->symbol=value;
-    succession->evaluation->representation=value;
-    return (new_abstraction(value, value));  
+    succession->evaluation->data=value;
+    return (new_abstraction(value, value));
 }
 
 /*
 ** new space
 */
 
-/* ( A B  C  D) */
-/*  /\    /|\*/
-/*       c c c */
-
-t_space     *new_space(t_abstraction int dimensions[2]) {
-    int             i;
-    t_abstraction   **mat;
+t_space     *new_space(t_abstraction **dimensions) {
     t_space         *space;
 
     space = (t_space*)f_memalloc(sizeof(t_space));
-    mat = (t_abstraction**)f_memalloc(sizeof(t_abstraction*) * dimensions[0]);
-    i = 0;
-    while (i < 2){
-        mat[i] = (t_abstraction*)f_memalloc(sizeof(t_abstraction*) * dimensions[1]);
-    }
-    space->dimensions = mat;
+    space->dimensions = dimensions;
     return (space);
 }
 
@@ -188,9 +194,9 @@ t_succession *new_succession(t_proccess *proccess, int i, t_abstraction* (*selec
 
 t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*selector)(struct s_proccess*, int)) {
     t_proccess      *proccess;
-    t_succession    **succesions;
-    t_abstraction   *q;
-    int             *dimenensions;
+    //t_succession    **succesions;
+    //t_abstraction   *q;
+    //t_abstraction   **dimenensions;
 
     void            *last_obs;
     int             i;
@@ -198,6 +204,7 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
     proccess = (t_proccess*)f_memalloc(sizeof(proccess) * no_successions);
 
     //allocate v_space
+    /*
     proccess->v_space = (t_abstraction**)f_memalloc(sizeof(t_abstraction*) * 3);
     proccess->v_space[2] = NULL;
     proccess->v_space[0] = new_abstraction("0", "0");
@@ -212,11 +219,22 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
     //allocate abstractions for p-space
 
     //allocate s_space
-    dimenensions = (int*)f_memalloc(sizeof(int));
-    dimenensions[0] = 2;
-    dimenensions[1] = 2;
-    proccess->posibility_space = new_space(dimenensions);
-    //proccess->posibility_space = generate_possibility_space(proccess); */
+    dimenensions = (t_abstraction**)f_memalloc(sizeof(t_abstraction*) * 2);
+    dimenensions[0]->symbol = "props";
+    dimenensions[1]->symbol = "values";
+    proccess->possibility_space = new_space(dimenensions);
+    */
+
+    int     *V;
+    int     *R;
+
+    V = (int*)f_memalloc(sizeof(int) * 2);
+    R = (int*)f_memalloc(sizeof(char*) * 2);
+    
+    V[0] = 0;
+    V[1] = 1;
+    R[1] = NULL:
+    proccess->possibility_space = gen_p_space()
     
     succesions = proccess->successions;
     last_obs = init;
@@ -333,7 +351,9 @@ char    *succeed(char *src, char *notation) {
     return (dst);
 }
 
-/**/
+/*
+**
+*/
 
 char     **new_row(char **propositions, int n, int m) {
     int     i;
@@ -432,7 +452,7 @@ int     raise(int base, int power){
     return (raise(base, power) * raise(base, power - 1));
 }
 
-char    **generate_possibility_space(t_proccess *proccess) {  //[p [m p]] [p r]
+char    **generate_possibility_space(t_proccess *proccess) {
     int             n;
     int             m;
     int             r;
@@ -461,8 +481,7 @@ char    **generate_possibility_space(t_proccess *proccess) {  //[p [m p]] [p r]
     
     i = 0;
     while (i < p_space_len) {
-        possibility_space[i] = f_memalloc(sizeof(char*) * m);
-        v_idx = 0;
+[]=]        v_idx = 0;
         p_idx = 0;
         j = 0;
         while (j < n) {
@@ -581,9 +600,9 @@ char    *f_strdup(char *s) {
 }
 
 /*
-** 
+** Given prima succession notation
 */
-/**/
+
 char    *generation(char *prima, int successions, char *notation) {
     int     i;
     char    *tmp;
@@ -639,7 +658,6 @@ struct s_global *init(struct s_global *global, char *prima, char *successions, c
 /*
 ** Proc calc functions
 */
-
 int          simple_reductive_proc_sys (size_t successions, int *v_space, size_t v_len, size_t no_of_procs) {
 
     int     *base_rep;
@@ -662,21 +680,86 @@ int          simple_reductive_proc_sys (size_t successions, int *v_space, size_t
     }
 }
 
+
+int     arr_len(int *len){
+
+}
+
+int **g(int **res, int *cur, int *V, int *R, int i, int j int len) {
+    if (j == arr_len(V)) {
+        res[len - 1] = cur[i];
+    }
+    cur = (*int)f_memalloc(sizeof(int*) * arr_len(R));
+    while (i < R.length) {
+        cur[arr_length(V) - 1] = V[i];
+        g(res, cur, V, R, i, j, len);
+    }
+    return (res);
+}
+
+int **gen_p_space(int *V, char **R){
+    int     res;
+    int     cur;
+    int     len;
+    
+    len = raise(arr_len(V), arr_len(R));
+    res = (int**)f_memalloc((int*)len + 1);
+    res[len] = NULL;
+    g(res, cur, V, R, 0, 0, len);
+    return (res);
+}
+
 int          main (int argc, char **argv) {
+    //general
     t_global    *global;
     char        *successions;
+
+    //RTN 
     char        *prima_representation;
     char        *notation;
 
+    //p-space generation (integers)
+    int         vLen;
+    int         rLen;
+    int         *V;
+    int         *R;
+    int         **p_space;
+    
     successions = argv[2];
     prima_representation = argv[1];
     notation = argv[3];
 
     if (argc < 2){
-        return 0;
+        return (0);
     }
 
-    new_proccess(8, "0", simple_determinate_selector)
+    /*
+    **     Test p_space generation
+    */
+    
+    V = (int*)(f_memalloc(sizeof(int) * vLen));
+    R = (int*)(f_memalloc(sizeof(int) * rLen));
+    p_space = gen_p_space(V, R);
+    
+    /* 
+        Expected
+        [0 0]
+        [0, 1]
+        [1, 0]
+    */  
+
+    /*
+    **     Test process calculation
+    */
+
+
+
+    //new_proccess(8, "0", simple_determinate_selector);
+
+    /*
+    **    Test RTN Generator
+    */
+
     /*
     global = NULL;
     display_menu(global);
