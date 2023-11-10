@@ -14,8 +14,10 @@ typedef struct   s_global {
     char    *prima;
     char    *successions;
     char    *notation;
-    int     *option;
+    int     option;
 }                t_global;
+
+/***********************************************************/
 
 /*
 ** RTN: 
@@ -89,6 +91,7 @@ typedef struct  s_proccess {
 ** New abstraction
 */
 
+/*
 t_abstraction *new_abstraction(void *symbol, void *data) {
     t_abstraction *new;
 
@@ -98,11 +101,13 @@ t_abstraction *new_abstraction(void *symbol, void *data) {
     new->expression = NULL;
     return (new);
 }
+*/
 
 /*
 ** New proposition  
 */
 
+/*
 t_proposition *new_proposition(t_abstraction *representation, t_abstraction **abstractions) {
     t_proposition *new;
 
@@ -111,11 +116,13 @@ t_proposition *new_proposition(t_abstraction *representation, t_abstraction **ab
     new->representation = representation;
     return( new );
 }
+*/
 
 /*
 ** New dimension
 */
 
+/*
 t_dimension *new_dimension(t_abstraction **positions) {
     t_dimension *new;
     size_t len;
@@ -126,11 +133,13 @@ t_dimension *new_dimension(t_abstraction **positions) {
 
     return (new);
 }
+*/
 
 /*
 ** generate an array of positions
 */
 
+/*
 t_abstraction **gen_positions(size_t no_of_pos) {
     size_t          i;
     t_abstraction   **positions;
@@ -143,6 +152,7 @@ t_abstraction **gen_positions(size_t no_of_pos) {
     }
     return (positions);
 }
+*/
 
 /*
 ** simple determinate selector assume binary state-space single proposition
@@ -151,6 +161,7 @@ t_abstraction **gen_positions(size_t no_of_pos) {
 ** TODO: modify struct s_abstraction, to include uttility functions for CRUD
 */
 
+/*
 t_abstraction *simple_determinate_selector(t_proccess *proccess, int idx) {
     t_succession *succession;
     succession = proccess->successions[idx];
@@ -163,11 +174,13 @@ t_abstraction *simple_determinate_selector(t_proccess *proccess, int idx) {
     succession->evaluation->data=value;
     return (new_abstraction(value, value));
 }
+*/
 
 /*
 ** new space
 */
 
+/*
 t_space     *new_space(t_abstraction **dimensions) {
     t_space         *space;
 
@@ -175,6 +188,7 @@ t_space     *new_space(t_abstraction **dimensions) {
     space->dimensions = dimensions;
     return (space);
 }
+*/
 
 /*
 ** allocate and evaluate, observe a succession
@@ -188,11 +202,14 @@ t_succession *new_succession(t_proccess *proccess, int i, t_abstraction* (*selec
     return (proccess->successions[i]);
 }
 
+/*
 int     arr_len(int *arr) {
     arr[0] = 0;
     return 0;
 }
+*/
 
+/*
 int **g(int **res, int *cur, int *V, char **R, int i, int j, int len) {
     int     vlen;
 
@@ -207,11 +224,13 @@ int **g(int **res, int *cur, int *V, char **R, int i, int j, int len) {
     }
     return (res);
 }
+*/
 
 /*
 ** simple p_space function
 */
 
+/*
 int **gen_p_space(int *V, char **R){
     int     res;
     int     cur;
@@ -223,12 +242,14 @@ int **gen_p_space(int *V, char **R){
     g(res, cur, V, R, 0, 0, len);
     return (res);
 }
+*/
 
 /*
 ** proc calc functions
 ** TODO : Check spellling of proccess
 */
 
+/*
 t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*selector)(struct s_proccess*, int)) {
     t_proccess      *proccess;
     //t_succession    **succesions;
@@ -241,7 +262,7 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
     proccess = (t_proccess*)f_memalloc(sizeof(proccess) * no_successions);
 
     //allocate v_space
-    /*
+
     proccess->v_space = (t_abstraction**)f_memalloc(sizeof(t_abstraction*) * 3);
     proccess->v_space[2] = NULL;
     proccess->v_space[0] = new_abstraction("0", "0");
@@ -260,7 +281,6 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
     dimenensions[0]->symbol = "props";
     dimenensions[1]->symbol = "values";
     proccess->possibility_space = new_space(dimenensions);
-    */
 
     int             *V;
     char            **R;
@@ -286,6 +306,7 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
 
     return (proccess);
 }
+*/
 
 /*
 ** display succession
@@ -296,6 +317,7 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
 **
 */
 
+/*
 void    display_succession(t_succession *succession, void* last_evaluation, size_t idx) {
     f_putnbr(idx);
     f_putchar(' ');
@@ -306,11 +328,13 @@ void    display_succession(t_succession *succession, void* last_evaluation, size
     f_putstr((char*)succession->evaluation);
     f_putchar('\n');
 }
+*/
 
 /*
 ** display successions of a proccess
 */
 
+/*
 void    display_proccess(t_proccess *proccess){
     size_t     i;
     void    *last;
@@ -322,6 +346,9 @@ void    display_proccess(t_proccess *proccess){
         i++;
     }    
 }
+*/
+
+/************************************************************************/
 
 /*
 ** After dining proccess data structure.
@@ -390,33 +417,6 @@ char    *succeed(char *src, char *notation) {
 }
 
 /*
-** 
-*/
-
-char     **new_row(char **propositions, int n, int m) {
-    int     i;
-    int     j;
-    int     k;
-    int     len;
-    char    **arr;
-
-    len = f_array_len((void**)propositions);
-    arr = (char**)f_memalloc(sizeof(char*) * n);
-    i = 0;
-    while (i < n) {
-        arr[i] = (char*)f_memalloc(sizeof(char) * m);
-        j = 0;
-        while (j < m) {
-            k = 0;
-            while(k < len) {
-                succeed(propositions[k], "infix");
-            }
-        }
-    }
-    return (arr);
-}
-
-/*
 ** Given a value space, (p (m p))
 ** The number of rows in the possibility space is doubled when a prop is added
 ** 1 - 2
@@ -428,112 +428,7 @@ char     **new_row(char **propositions, int n, int m) {
 ** The length of each row will always by the number of propositions
 */
 
-/*
-** Given a representaiton in RTN a, hallucinates a meta-representation
-** Tests
-** Given:
-    (:= A
-        (:= 
-            V # value space
-            (
-                p 
-                (m p)
-            )
-        )
-        (:=
-            R # propostions space
-            (
-                p
-                q
-            )
-        )
-    )
 
-    (:= S
-        (p-space
-            V
-            R
-        ) # => (
-            (p , p),
-            (p, (m p)),
-            ((m p), p),
-            ((m p), (m p)),
-        )
-    )
-
-    char** V = ["p", "(m p)"]
-    char** R = ["p", "q"]
-    char*** S = [
-            ["p" , "p"],
-            ["p", "(m p)"],
-            ["(m p)", "p"]],
-            ["(m p)", "(m p)"],
-        ]
-    prop_index = 0
-    val_index = 0
-    p_space = NULL
-
-    NOTES:
-    
-    High Level Procedure f
-    1. If p_space is NULL, Declare an 2D char* matrix, p_space, 
-        dimensions: len(propositions) * (len(value_space) ** 2)
-    2. Given the space of propositions,
-        Select each
-        Call f(V R,)
-*/
-
-int     raise(int base, int power){
-    if (power == 0){
-        return 1;
-    }
-    return (raise(base, power) * raise(base, power - 1));
-}
-
-char    **generate_possibility_space(t_proccess *proccess) {
-    int             n;
-    int             m;
-    int             r;
-    int             i;
-    int             j;
-
-    int             p_space_len;
-    int             v_idx;
-    int             p_idx;
-    char            *cur_prop_idx;
-    char            *cur_prop;
-    char            *cur_val;
-    char            **possibility_space;
-    int             CONST_CHAR_OFFSET = 48;
-    t_abstraction   **propositions;
-
-    n = f_array_len((void**)proccess->v_space);
-    m = f_array_len((void**)proccess->r_space);
-
-    p_space_len = (sizeof(char*) * raise(n, m));
-    possibility_space = f_memalloc(sizeof(char*) * raise(n, m));
-    
-    if (n < 2) {
-        return NULL;
-    }
-    
-    i = 0;
-    while (i < p_space_len) {
-[]=]        v_idx = 0;
-        p_idx = 0;
-        j = 0;
-        while (j < n) {
-            v_idx = (v_idx < n ? v_idx++ : 0);
-            p_idx = (p_idx < m ? p_idx : 0);
-            cur_val = ((char*)(proccess->v_space[v_idx] + CONST_CHAR_OFFSET));
-            propositions = proccess->r_space;
-            cur_prop = (propositions[p_idx]);
-            possibility_space[i][j] = generation(propositions, *cur_val, "prefix");
-        }
-        i++;
-    }
-    return possibility_space;
-}
 
 /*
     Given a representation as a p-space, hallucinate the meta-representation
@@ -618,10 +513,6 @@ char    **generate_possibility_space(t_proccess *proccess) {
     )
 */ 
 
-char    *hallucinate(*representation) {
-    
-}
-
 char    *f_strdup(char *s) {
     int    len;
     int     i;
@@ -672,7 +563,7 @@ t_global        *display_menu(t_global *data) {
     f_putendl("2. hallucinatory successions ");
 
     f_gnl(1, &input);
-    data.option = (int)(input[0] - 60);
+    data->option = (int)(input[0] - 60);
     return (data);
 }
 
@@ -696,6 +587,7 @@ struct s_global *init(struct s_global *global, char *prima, char *successions, c
 /*
 ** Proc calc functions
 */
+
 int          simple_reductive_proc_sys (size_t successions, int *v_space, size_t v_len, size_t no_of_procs) {
 
     int     *base_rep;
@@ -711,7 +603,7 @@ int          simple_reductive_proc_sys (size_t successions, int *v_space, size_t
 
     //allocate space for proccess rep
     //observe base rep
-    init = v_space[0]
+    init = v_space[0];
     for (int i; i < successions; i++) {
         int succession = new_succession();
         select (base_rep[i])
@@ -719,20 +611,9 @@ int          simple_reductive_proc_sys (size_t successions, int *v_space, size_t
 }
 
 int          main (int argc, char **argv) {
-    //general
-    t_global    *global;
     char        *successions;
-
-    //RTN 
     char        *prima_representation;
     char        *notation;
-
-    //p-space generation (integers)
-    int         vLen;
-    int         rLen;
-    int         *V;
-    int         *R;
-    int         **p_space;
     
     successions = argv[2];
     prima_representation = argv[1];
@@ -743,56 +624,11 @@ int          main (int argc, char **argv) {
     }
 
     /*
-    **     Test p_space generation
-    */
-    
-    V = (int*)(f_memalloc(sizeof(int) * vLen));
-    R = (int*)(f_memalloc(sizeof(int) * rLen));
-    p_space = gen_p_space(V, R);
-    
-    /* 
-        Expected
-        [0 0]
-        [0, 1]
-        [1, 0]
-    */  
-
-    /*
-    **     Test process calculation
-    */
-
-
-
-    //new_proccess(8, "0", simple_determinate_selector);
-
-    /*
     **    Test RTN Generator
     */
 
-    /*
-    global = NULL;
     display_menu(global);
     global = init(global, prima_representation, successions, notation);
     f_putendl(global->meta);
-    new_proccess
     return (0);
-    */
 }
-
-/*
-** MR PI
-
-(P
-    (:= e engineer)
-    (A x)(== P e)
-    (A x)(ps
-        (x P)
-        (~ 
-            (==>
-                x
-                P
-            )
-        )
-    )
-)
-*/
