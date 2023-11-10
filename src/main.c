@@ -79,7 +79,8 @@ typedef struct  s_succession {
 typedef struct  s_proccess {
     struct s_abstraction    **v_space;
     struct s_proposition    **r_space;
-    struct s_space          *possibility_space;
+    //struct s_space        *possibility_space;
+    int                     **possibility_space;
     struct s_succession     **successions; 
     size_t                  no_of_proccesses;                                                                                     
 }               t_proccess;
@@ -187,6 +188,42 @@ t_succession *new_succession(t_proccess *proccess, int i, t_abstraction* (*selec
     return (proccess->successions[i]);
 }
 
+int     arr_len(int *arr) {
+    arr[0] = 0;
+    return 0;
+}
+
+int **g(int **res, int *cur, int *V, char **R, int i, int j, int len) {
+    int     vlen;
+
+    vlen = arr_len(V);    
+    if (j == vlen) {
+        res[vlen - 1] = &cur[i];
+    }
+    cur = (int*)f_memalloc(sizeof(int*) * arr_len(R));
+    while (i < f_array_len(R)) {
+        cur[vlen - 1] = V[i];
+        g(res, cur, V, R, i, j, len);
+    }
+    return (res);
+}
+
+/*
+** simple p_space function
+*/
+
+int **gen_p_space(int *V, char **R){
+    int     res;
+    int     cur;
+    int     len;
+    
+    len = raise(arr_len(V), arr_len(R));
+    res = (int**)f_memalloc((int*)len + 1);
+    res[len] = -1; //assume positive values in state-space
+    g(res, cur, V, R, 0, 0, len);
+    return (res);
+}
+
 /*
 ** proc calc functions
 ** TODO : Check spellling of proccess
@@ -225,16 +262,17 @@ t_proccess *new_proccess(int no_successions, void *init, t_abstraction* (*select
     proccess->possibility_space = new_space(dimenensions);
     */
 
-    int     *V;
-    int     *R;
+    int             *V;
+    char            **R;
+    t_succession    **succesions;
 
     V = (int*)f_memalloc(sizeof(int) * 2);
-    R = (int*)f_memalloc(sizeof(char*) * 2);
+    R = (char**)f_memalloc(sizeof(char*) * 2);
     
     V[0] = 0;
     V[1] = 1;
-    R[1] = NULL:
-    proccess->possibility_space = gen_p_space()
+    R[1] = (void*)0;
+    proccess->possibility_space = gen_p_space(V, R);
     
     succesions = proccess->successions;
     last_obs = init;
@@ -352,7 +390,7 @@ char    *succeed(char *src, char *notation) {
 }
 
 /*
-**
+** 
 */
 
 char     **new_row(char **propositions, int n, int m) {
@@ -680,35 +718,6 @@ int          simple_reductive_proc_sys (size_t successions, int *v_space, size_t
     }
 }
 
-
-int     arr_len(int *len){
-
-}
-
-int **g(int **res, int *cur, int *V, int *R, int i, int j int len) {
-    if (j == arr_len(V)) {
-        res[len - 1] = cur[i];
-    }
-    cur = (*int)f_memalloc(sizeof(int*) * arr_len(R));
-    while (i < R.length) {
-        cur[arr_length(V) - 1] = V[i];
-        g(res, cur, V, R, i, j, len);
-    }
-    return (res);
-}
-
-int **gen_p_space(int *V, char **R){
-    int     res;
-    int     cur;
-    int     len;
-    
-    len = raise(arr_len(V), arr_len(R));
-    res = (int**)f_memalloc((int*)len + 1);
-    res[len] = NULL;
-    g(res, cur, V, R, 0, 0, len);
-    return (res);
-}
-
 int          main (int argc, char **argv) {
     //general
     t_global    *global;
@@ -769,3 +778,21 @@ int          main (int argc, char **argv) {
     return (0);
     */
 }
+
+/*
+** MR PI
+
+(P
+    (:= e engineer)
+    (A x)(== P e)
+    (A x)(ps
+        (x P)
+        (~ 
+            (==>
+                x
+                P
+            )
+        )
+    )
+)
+*/
