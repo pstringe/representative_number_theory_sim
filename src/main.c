@@ -81,9 +81,6 @@ char    *f_strdup(char *s){
     return (dup);
 }
 
-//write a memdel function
-
-
 char    *generation(char *prima, int sucessions, char *notation) {
     int     i;
     char    *tmp;
@@ -99,11 +96,142 @@ char    *generation(char *prima, int sucessions, char *notation) {
     return(meta);
 }
 
+/*
+** process calc
+1. declare v_space char*
+2. declare r_space char**
+3. generate p_space (v_space, r_space) => p_space
+4. generate simple example:
+      |   | .
+    . | . | 
+      |   | .
+    . | . | 
+      |   | .
+    . | . | 
+      |   | .
+    . | . | 
+
+5. paramaterize/generalize for following examples:
+    0 | 0 | 1
+    1 | 1 | 0 
+    0 | 0 | 1
+    1 | 1 | 0 
+    
+    0 0 | 0 0 | 1 0
+    1 0 | 1 0 | 0 1
+    0 1 | 0 1 | 1 1
+    1 1 | 1 1 | 0 0
+
+
+- single liminal expression
+    | 1 | 1 | 0 | 0 
+  0 | 0 | 0 | 1 |
+    | 1 | 1 | 0 | 
+    | 0 | 0 | 1 | 1
+  1 | 1 | 1 | 0 |
+    | 0 | 0 | 0 |
+    | 1 | 1 | 0 | 0
+  0 | 0 | 0 | 1 |
+    | 1 | 1 | 0 | 
+    | 0 | 0 | 1 | 1
+          p	  p	  F
+          p	  F
+          F
+*/
+
+/*
+**  new process, determinate selector where (~ (= (f f)))
+*/
+
+/*
+HL plan: 
+    0. gen p_space
+    1. succession (prev_evaluation, p_space, pidx, sidx) => **char
+        declare variable for observation
+        declare variable for evaluation
+
+        observation = previous_evaluation
+        if (= (F F) F)
+            evaluation = observation
+        else (~ (= (F F)))
+            evaluation = select(observation, p_space, 'determinate' | 'model')
+*/
+
+
+int raise (int b, int p) {
+    if (!p){
+        return 1;
+    }
+    return (b * raise(b, p - 1));
+}
+
+/*
+** populate p_space
+*/
+
+char ***f (char ***res, char **cur, char **v_space, char **r_space, size_t i, size_t j, size_t r_len, size_t p_idx) {
+    if (j == f_array_len(v_space)) {
+        res[p_idx][i] = cur[i];
+        return res;
+    }
+
+    while (i < r_len) {
+        cur[i] = f_strdup(v_space[j]);
+        f(res, cur, v_space, r_space, i, j + 1, r_len, p_idx);
+        i++;
+    }
+    return (res);
+}
+
+void display_p_space(char ***p_space, int rlen) {
+    int i;
+    int j;
+
+    i = 0;
+    while (*(p_space + i) != NULL) {
+        j = 0;
+        while (j < rlen) {
+            f_putstr(p_space[i][j++]);
+        }
+    }
+}
+
+char ***gen_p_space(char **v_space, char **r_space, int rlen, int vlen) {
+    int     plen;
+    char    ***p_space;
+    char    **tmp_row;
+    
+    plen = raise(rlen, vlen);
+
+    //allocate matrix for pspace
+    p_space = (char***)f_memalloc( sizeof(char**) * plen + 1);
+    p_space[plen] = NULL;
+    tmp_row = (char**)f_memalloc(sizeof(char*) * rlen + 1);
+    f(p_space, tmp_row, v_space, r_space, 0, 0, f_array_len(r_space), 0);
+    display_p_space(p_space, rlen);
+    return (p_space);
+}
+
+char **new_process(char **v_space, char **r_space) {
+    char    ***p_space;
+    int     vlen;
+    int     rlen;
+
+    vlen = f_array_len(v_space);
+    rlen = f_array_len(r_space);
+    p_space = gen_p_space(v_space, r_space, rlen, vlen);
+
+    display_p_space(p_space, rlen);
+    return (*p_space);
+}
+
 int     main (int argc, char **argv) {
-    char    *meta;
+    //char    *meta;
     char    *prima;
     char    *sucessions;
     char    *notation;
+    char    **v_space;
+    char    **r_space;
 
     if (argc < 2){
         return 0;
@@ -113,7 +241,16 @@ int     main (int argc, char **argv) {
     sucessions = argv[1];
     notation = argv[3];
 
-    meta = generation(prima, parse_num(sucessions), notation);
-    f_putendl(meta);
+    v_space = (char**)f_memalloc(sizeof(char*) * 3);
+    r_space = (char**)f_memalloc(sizeof(char*) * 3);
+
+    v_space[2] = NULL;
+    v_space[0] = f_strdup("0");
+    v_space[1] = f_strdup("1");
+
+    new_process(v_space, r_space);
+    //meta = generation(prima, parse_num(sucessions), notation);
+    //f_putendl(meta);
+
     return (0);
 }
