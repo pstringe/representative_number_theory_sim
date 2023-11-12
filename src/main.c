@@ -169,9 +169,26 @@ int raise (int b, int p) {
 ** populate p_space
 */
 
-char ***f (char ***res, char **cur, char **v_space, char **r_space, size_t i, size_t j, size_t r_len, size_t p_idx) {
+char **td_array_cpy(char **arr) {
+    size_t     i;
+    char    **new;
+    size_t  len;
+    
+    len = f_array_len(arr);
+    new = (char**)f_memalloc(sizeof(char*) * len);
+    
+    i = 0; 
+    while (i < len) {
+        new[i] = f_strdup(arr[i]);
+        i ++;
+    }
+    return (new);
+}
+
+char ***f (char ***res, char **cur, char **v_space, char **r_space, size_t i, size_t j, size_t r_len, size_t *p_idx) {
     if (j == f_array_len(v_space)) {
-        res[p_idx][i] = cur[i];
+        res[*p_idx] = td_array_cpy(cur);
+        p_idx++;
         return res;
     }
 
@@ -197,17 +214,20 @@ void display_p_space(char ***p_space, int rlen) {
 }
 
 char ***gen_p_space(char **v_space, char **r_space, int rlen, int vlen) {
-    int     plen;
-    char    ***p_space;
-    char    **tmp_row;
+    int         plen;
+    size_t      *p_idx;
+    char        ***p_space;
+    char        **tmp_row;
     
     plen = raise(rlen, vlen);
+    p_idx = (size_t*)f_memalloc(sizeof(size_t*));
+    *p_idx = 0;
 
     //allocate matrix for pspace
     p_space = (char***)f_memalloc( sizeof(char**) * plen + 1);
     p_space[plen] = NULL;
     tmp_row = (char**)f_memalloc(sizeof(char*) * rlen + 1);
-    f(p_space, tmp_row, v_space, r_space, 0, 0, f_array_len(r_space), 0);
+    f(p_space, tmp_row, v_space, r_space, 0, 0, f_array_len(r_space), p_idx);
     display_p_space(p_space, rlen);
     return (p_space);
 }
@@ -247,6 +267,10 @@ int     main (int argc, char **argv) {
     v_space[2] = NULL;
     v_space[0] = f_strdup("0");
     v_space[1] = f_strdup("1");
+
+    r_space[2] = NULL;
+    r_space[0] = "r";
+    r_space[1] = "q";
 
     new_process(v_space, r_space);
     //meta = generation(prima, parse_num(sucessions), notation);
